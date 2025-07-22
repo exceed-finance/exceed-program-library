@@ -1,0 +1,27 @@
+[package]
+name = "liquid-staking"
+version = "0.1.0"
+description = "Created with Anchor"
+edition = "2021"
+
+[lib]
+crate-type = ["cdylib", "lib"]
+name = "liquid_staking"
+
+[features]
+no-entrypoint = []
+no-idl = []
+no-log-ix-name = []
+cpi = ["no-entrypoint"]
+default = []
+idl-build = ["anchor-lang/idl-build", "anchor-spl/idl-build"]
+
+[dependencies]
+bytemuck = { version = "1.20.0", features = ["min_const_generics"] }
+
+
+anchor-lang = { version = "0.30.1", features = ["init-if-needed"] }
+anchor-spl = "0.30.1"
+ruint = "1.3.0"
+solana-program = "1.18.26"
+mpl-token-metadata = "5.1.0"
