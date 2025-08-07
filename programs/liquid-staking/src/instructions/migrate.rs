@@ -5,12 +5,19 @@ use anchor_spl::{
 };
 
 use crate::{
+    error::StakingError,
     state::{AccessControl, Pair},
     types::ConversionDirection,
 };
 
 const PIK_USDC_PAIR_ADDRESS: Pubkey = pubkey!("EwqMpnBHKEd537E37kcsNU9Qi82uukjVAXsC8K5Kswt7");
 const P_USD_MINT_ADDRESS: Pubkey = pubkey!("9ir8o6rj7dJsXXFQPbDZcWCiPx4UDcdTKrYZfnct6GDm");
+
+#[event]
+pub struct MigrateEvent {
+    pub input_amount: u64,
+    pub output_amount: u64,
+}
 
 #[derive(Accounts)]
 pub struct Migrate<'info> {
@@ -63,13 +70,19 @@ pub fn handler(ctx: Context<Migrate>) -> Result<()> {
     let staker_p_usd_account = &ctx.accounts.staker_p_usd_account;
 
     let current_timestamp = Clock::get()?.unix_timestamp;
+
     let input_amount = staker_p_usd_account.amount;
+    require!(input_amount > 0, StakingError::InvalidQuantity);
 
     let lst_amount = pair.calculate_output_amount(
         input_amount,
         current_timestamp,
         ConversionDirection::BaseToLst,
     )?;
+    require!(
+        lst_amount <= input_amount,
+        StakingError::InvalidMigrationOutput
+    );
 
     let signer_seeds: &[&[&[u8]]] = &[&[
         b"lst_mint",
@@ -103,6 +116,11 @@ pub fn handler(ctx: Context<Migrate>) -> Result<()> {
         ),
         lst_amount,
     )?;
+
+    emit!(MigrateEvent {
+        input_amount,
+        output_amount: lst_amount,
+    });
 
     Ok(())
 }

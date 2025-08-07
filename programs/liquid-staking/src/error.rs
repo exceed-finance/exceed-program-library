@@ -176,4 +176,7 @@ pub enum StakingError {
 
     #[msg("Invalid Minimum Deposit")]
     InvalidMinimumDeposit = 441,
+
+    #[msg("Cannot receive more LSTs than input tokens")]
+    InvalidMigrationOutput = 442,
 }
