@@ -3,8 +3,19 @@ use anchor_spl::{
     associated_token::AssociatedToken,
     token_interface::{transfer_checked, Mint, TokenAccount, TokenInterface, TransferChecked},
 };
+use pyth_solana_receiver_sdk::price_update::PriceUpdateV2;
 
 use crate::{error::StakingError, state::*};
+
+#[event]
+pub struct ExecuteWithdrawEvent {
+    pub withdrawal_fee: u64,
+    pub input_amount: u64,
+    pub output_amount: u64,
+    pub sol_usdc_price: i64,
+    pub price_exponent: i32,
+    pub price_publish_time: i64,
+}
 
 #[derive(Accounts)]
 pub struct ExecuteWithdraw<'info> {
@@ -79,14 +90,17 @@ pub struct ExecuteWithdraw<'info> {
     pub staker: Signer<'info>,
 
     #[account(
-        mut,
-        associated_token::mint = pair.base_token_mint,
+        init_if_needed,
+        payer = staker,
+        associated_token::mint = base_token_mint,
         associated_token::authority = staker,
         associated_token::token_program = token_program
     )]
     pub staker_base_token_account: InterfaceAccount<'info, TokenAccount>,
+    pub price_feed: Box<Account<'info, PriceUpdateV2>>,
     pub associated_token_program: Program<'info, AssociatedToken>,
     pub token_program: Interface<'info, TokenInterface>,
+    pub system_program: Program<'info, System>,
 }
 
 pub fn handler(ctx: Context<ExecuteWithdraw>) -> Result<()> {
@@ -172,8 +186,21 @@ pub fn handler(ctx: Context<ExecuteWithdraw>) -> Result<()> {
         ctx.accounts.pair.base_mint_decimals as u8,
     )?;
 
-    // Account will be automatically closed and rent returned to staker
-    // due to the close = staker constraint
+    let clock = Clock::get()?;
+    let price = ctx.accounts.price_feed.get_price_no_older_than(
+        &clock,
+        100,
+        &ctx.accounts.access_control.sol_usdc_feed_id,
+    )?;
+
+    emit!(ExecuteWithdrawEvent {
+        withdrawal_fee: withdrawal_request.lst_fee_amount,
+        input_amount: withdrawal_request.lst_amount,
+        output_amount: withdrawal_request.base_amount,
+        sol_usdc_price: price.price,
+        price_exponent: price.exponent,
+        price_publish_time: price.publish_time
+    });
 
     Ok(())
 }

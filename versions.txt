@@ -1,0 +1,5 @@
+node: v23.4.0
+yarn: 1.22.22
+rustc: 1.81.0 (eeb90cda1 2024-09-04)
+solana-cli: 2.1.14 (src:3ad46824; feat:3271415109, client:Agave)
+anchor-cli: 0.30.1

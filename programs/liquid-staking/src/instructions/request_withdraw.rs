@@ -2,12 +2,23 @@ use anchor_lang::prelude::*;
 use anchor_spl::token_interface::{
     transfer_checked, Mint, TokenAccount, TokenInterface, TransferChecked,
 };
+use pyth_solana_receiver_sdk::price_update::PriceUpdateV2;
 
 use crate::{
     error::StakingError,
     state::{AccessControl, Pair, WithdrawalRequest, WithdrawalWindow},
     types::ConversionDirection,
 };
+
+#[event]
+pub struct RequestWithdrawalEvent {
+    pub withdrawal_fee: u64,
+    pub input_amount: u64,
+    pub output_amount: u64,
+    pub sol_usdc_price: i64,
+    pub price_exponent: i32,
+    pub price_publish_time: i64,
+}
 
 #[derive(Accounts)]
 pub struct RequestWithdraw<'info> {
@@ -77,6 +88,7 @@ pub struct RequestWithdraw<'info> {
         bump = access_control.bump
     )]
     pub access_control: Box<Account<'info, AccessControl>>,
+    pub price_feed: Box<Account<'info, PriceUpdateV2>>,
     pub token_program: Interface<'info, TokenInterface>,
     pub system_program: Program<'info, System>,
 }
@@ -163,7 +175,21 @@ pub fn handler(
         ctx.accounts.lst_mint.decimals,
     )?;
 
-    // TODO: emit event
+    let clock = Clock::get()?;
+    let price = ctx.accounts.price_feed.get_price_no_older_than(
+        &clock,
+        100,
+        &ctx.accounts.access_control.sol_usdc_feed_id,
+    )?;
+
+    emit!(RequestWithdrawalEvent {
+        withdrawal_fee: lst_fee_amount,
+        input_amount: amount,
+        output_amount: lst_withdraw_amount,
+        sol_usdc_price: price.price,
+        price_exponent: price.exponent,
+        price_publish_time: price.publish_time
+    });
 
     Ok(())
 }

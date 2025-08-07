@@ -10,7 +10,7 @@ pub mod state;
 pub mod types;
 pub mod u64x64_math;
 
-declare_id!("p4riTyfkW74xrFPbZyxw4UhmsYAyRdg8nc27CvQBmfD");
+declare_id!("par1tyqusak2f2DXg9RHv78SVHNWXkJLSbtJZQSuWjV");
 
 #[program]
 pub mod liquid_staking {
@@ -152,6 +152,13 @@ pub mod liquid_staking {
         instructions::update_pair_limits::handler(ctx, params)
     }
 
+    pub fn update_sol_usdc_feed(
+        ctx: Context<UpdateSolUsdcFeed>,
+        new_feed_id: [u8; 32],
+    ) -> Result<()> {
+        instructions::update_sol_usdc_feed::handler(ctx, new_feed_id)
+    }
+
     pub fn update_whitelist(
         ctx: Context<UpdateWhitelist>,
         merkle_root: Option<[u8; 32]>,
@@ -169,5 +176,9 @@ pub mod liquid_staking {
         params: CreateTokenMetadataParams,
     ) -> Result<()> {
         instructions::create_token_metadata::handler(ctx, params)
+    }
+
+    pub fn migrate(ctx: Context<Migrate>) -> Result<()> {
+        instructions::migrate::handler(ctx)
     }
 }

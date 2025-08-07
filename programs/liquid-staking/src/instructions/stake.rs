@@ -5,12 +5,23 @@ use anchor_spl::{
         mint_to, transfer_checked, Mint, MintTo, TokenAccount, TokenInterface, TransferChecked,
     },
 };
+use pyth_solana_receiver_sdk::price_update::PriceUpdateV2;
 
 use crate::{
     error::StakingError,
     state::{AccessControl, Pair},
     types::ConversionDirection,
 };
+
+#[event]
+pub struct StakeEvent {
+    pub staking_fee: u64,
+    pub input_amount: u64,
+    pub output_amount: u64,
+    pub sol_usdc_price: i64,
+    pub price_exponent: i32,
+    pub price_publish_time: i64,
+}
 
 #[derive(Accounts)]
 pub struct Stake<'info> {
@@ -75,6 +86,8 @@ pub struct Stake<'info> {
     )]
     pub staker_lst_account: Box<InterfaceAccount<'info, TokenAccount>>,
 
+    pub price_feed: Box<Account<'info, PriceUpdateV2>>,
+
     #[account(mut)]
     pub staker: Signer<'info>,
     pub token_program: Interface<'info, TokenInterface>,
@@ -111,18 +124,6 @@ pub fn handler(
     let lst_staker_amount = lst_amount
         .checked_sub(lst_fee_amount)
         .ok_or(StakingError::CalculationOverflow)?;
-
-    // TODO: replace logs with event
-    // msg!("LST fee amount: {}", lst_fee_amount);
-    // msg!(
-    //     "LST staker balance {}",
-    //     ctx.accounts.staker_lst_account.amount
-    // );
-    // msg!(
-    //     "staker Base balance {}",
-    //     ctx.accounts.staker_base_token_account.amount
-    // );
-    // msg!("LST staker amount: {}", lst_staker_amount);
 
     // Transfer base tokens from staker to pair's base token account
     transfer_checked(
@@ -173,6 +174,23 @@ pub fn handler(
         ),
         lst_staker_amount,
     )?;
+
+    let clock = Clock::get()?;
+
+    let price = ctx.accounts.price_feed.get_price_no_older_than(
+        &clock,
+        100,
+        &ctx.accounts.access_control.sol_usdc_feed_id,
+    )?;
+
+    emit!(StakeEvent {
+        staking_fee: lst_fee_amount,
+        input_amount: quantity,
+        output_amount: lst_amount,
+        sol_usdc_price: price.price,
+        price_exponent: price.exponent,
+        price_publish_time: price.publish_time
+    });
 
     Ok(())
 }

@@ -3,12 +3,24 @@ use anchor_spl::{
     associated_token::AssociatedToken,
     token_interface::{burn, mint_to, Burn, Mint, MintTo, TokenAccount, TokenInterface},
 };
+use pyth_solana_receiver_sdk::price_update::PriceUpdateV2;
 
 use crate::{
     error::StakingError,
     state::{AccessControl, Pair},
     types::ConversionDirection,
 };
+
+#[event]
+pub struct SwapEvent {
+    pub source_fee_amount: u64,
+    pub destination_fee_amount: u64,
+    pub input_amount: u64,
+    pub output_amount: u64,
+    pub sol_usdc_price: i64,
+    pub price_exponent: i32,
+    pub price_publish_time: i64,
+}
 
 #[derive(Accounts)]
 pub struct SwapLst<'info> {
@@ -86,6 +98,7 @@ pub struct SwapLst<'info> {
         bump = access_control.bump
     )]
     pub access_control: Box<Account<'info, AccessControl>>,
+    pub price_feed: Box<Account<'info, PriceUpdateV2>>,
     pub token_program: Interface<'info, TokenInterface>,
     pub associated_token_program: Program<'info, AssociatedToken>,
     pub system_program: Program<'info, System>,
@@ -140,16 +153,6 @@ pub fn handler(
     // Check destination pair minimum and maximum deposit requirements
     destination_pair.check_minimum_deposit(base_token_amount)?;
     destination_pair.check_excessive_deposit(0, base_token_amount)?;
-
-    // TODO: replace msg with event
-    // msg!("Source LST fee amount: {}", source_lst_fee_amount);
-    // msg!("Source LST user amount: {}", user_source_lst_amount);
-    // msg!("Base token amount: {}", base_token_amount);
-    // msg!("Destination LST fee amount: {}", destination_lst_fee_amount);
-    // msg!(
-    //     "Destination LST user amount: {}",
-    //     user_destination_lst_amount
-    // );
 
     // Transfer source LST fee to fee account
     if source_lst_fee_amount > 0 {
@@ -215,6 +218,23 @@ pub fn handler(
         ),
         user_destination_lst_amount,
     )?;
+
+    let clock = Clock::get()?;
+    let price = ctx.accounts.price_feed.get_price_no_older_than(
+        &clock,
+        100,
+        &ctx.accounts.access_control.sol_usdc_feed_id,
+    )?;
+
+    emit!(SwapEvent {
+        source_fee_amount: source_lst_fee_amount,
+        destination_fee_amount: destination_lst_fee_amount,
+        input_amount: amount,
+        output_amount: destination_lst_amount,
+        sol_usdc_price: price.price,
+        price_exponent: price.exponent,
+        price_publish_time: price.publish_time
+    });
 
     Ok(())
 }

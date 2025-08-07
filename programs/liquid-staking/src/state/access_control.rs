@@ -17,6 +17,9 @@ pub struct AccessControl {
     pub unseal_authority: Pubkey,
     pub access_authority: Pubkey,
 
+    // Price Info
+    pub sol_usdc_feed_id: [u8; 32],
+
     // Emergency control system
     pub guardians: [Option<Pubkey>; 5],
     pub is_sealed: bool,

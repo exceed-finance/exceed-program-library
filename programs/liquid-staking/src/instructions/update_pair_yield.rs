@@ -2,7 +2,6 @@ use crate::state::pair::PRECISION;
 use crate::{
     error::StakingError,
     state::{AccessControl, Pair},
-    types::AuthorityType,
 };
 use anchor_lang::prelude::*;
 
