@@ -1,7 +1,7 @@
 #![allow(unexpected_cfgs)]
 use anchor_lang::prelude::*;
-
 use instructions::*;
+use solana_security_txt::security_txt;
 use types::AuthorityType;
 
 pub mod error;
@@ -11,6 +11,15 @@ pub mod types;
 pub mod u64x64_math;
 
 declare_id!("par1tyqusak2f2DXg9RHv78SVHNWXkJLSbtJZQSuWjV");
+
+security_txt! {
+    name: "liquid_staking",
+    project_url: "https://exceed.finance",
+    contacts: "email:hi@exceed.finance",
+    policy: "https://exceed.finance/security-policy",
+    source_code: "https://github.com/Exceed-Finance/exceed-program-library",
+    auditors: "https://quantstamp.com/"
+}
 
 #[program]
 pub mod liquid_staking {
