@@ -35,9 +35,7 @@ jobs:
 
       - name: Install Anchor CLI
         run: |
-          cargo install --git https://github.com/coral-xyz/anchor --tag v0.30.1 avm --force
-          avm install ${{ env.ANCHOR_VERSION }}
-          avm use ${{ env.ANCHOR_VERSION }}
+          npm i -g @coral-xyz/anchor-cli@${{ env.ANCHOR_VERSION }}
 
       - name: Build Program
         run: anchor build
