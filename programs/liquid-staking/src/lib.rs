@@ -193,6 +193,17 @@ pub mod liquid_staking {
         instructions::migrate::handler(ctx)
     }
 
+    pub fn migrate_pair_v2(ctx: Context<MigratePairV2>) -> Result<()> {
+        instructions::migrate_v2::migrate_pair_handler(ctx)
+    }
+
+    pub fn migrate_access_control_v2(
+        ctx: Context<MigrateAccessControlV2>,
+        nav_authority: Pubkey,
+    ) -> Result<()> {
+        instructions::migrate_v2::migrate_access_control_handler(ctx, nav_authority)
+    }
+
     pub fn update_nav(ctx: Context<UpdateNav>, total_equity: u64) -> Result<()> {
         instructions::update_nav::handler(ctx, total_equity)
     }

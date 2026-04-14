@@ -399,4 +399,45 @@ mod tests {
         assert!(result.is_err());
         assert!(matches!(result.unwrap_err().to_string(), s if s.contains("Deposit cap exceeded")));
     }
+
+    #[test]
+    fn test_variable_pair_returns_stored_rate() {
+        let mut pair = default_pair();
+        pair.pair_type = 1; // Variable
+        pair.last_yield_change_exchange_rate = 1_500_000; // 1.5x
+
+        // Regardless of timestamp, variable pair returns stored rate
+        let result = pair.calculate_exchange_rate(999_999_999).unwrap();
+        assert_eq!(result, 1_500_000);
+
+        // Even at creation time
+        let result = pair.calculate_exchange_rate(0).unwrap();
+        assert_eq!(result, 1_500_000);
+    }
+
+    #[test]
+    fn test_fixed_pair_still_compounds() {
+        let mut pair = default_pair();
+        pair.pair_type = 0; // Fixed (explicit)
+
+        // One year should still compound
+        let result = pair.calculate_exchange_rate(31_536_000).unwrap();
+        assert!(result > 1_000_000); // Should increase
+    }
+
+    #[test]
+    fn test_variable_pair_exchange_rate_can_decrease() {
+        let mut pair = default_pair();
+        pair.pair_type = 1;
+        pair.last_yield_change_exchange_rate = 900_000; // 0.9x (below initial)
+
+        let result = pair.calculate_exchange_rate(31_536_000).unwrap();
+        assert_eq!(result, 900_000); // Returns the decreased rate
+    }
+
+    #[test]
+    fn test_default_pair_type_is_fixed() {
+        let pair = default_pair();
+        assert_eq!(pair.pair_type, 0);
+    }
 }
