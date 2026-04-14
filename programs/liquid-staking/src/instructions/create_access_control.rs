@@ -32,6 +32,7 @@ pub fn handler(
     pair_authority: Pubkey,
     unseal_authority: Pubkey,
     access_authority: Pubkey,
+    nav_authority: Pubkey,
 ) -> Result<()> {
     // Verify the signer is the first admin
     let first_admin = Pubkey::from_str(FIRST_ADMIN).expect("must be a valid pubkey");
@@ -65,6 +66,10 @@ pub fn handler(
         access_authority != Pubkey::default(),
         StakingError::DefaultPubkeyNotAllowed
     );
+    require!(
+        nav_authority != Pubkey::default(),
+        StakingError::DefaultPubkeyNotAllowed
+    );
 
     // Initialize the access control account
     let access_control = &mut ctx.accounts.access_control;
@@ -74,6 +79,7 @@ pub fn handler(
     access_control.pair_authority = pair_authority;
     access_control.unseal_authority = unseal_authority;
     access_control.access_authority = access_authority;
+    access_control.nav_authority = nav_authority;
 
     access_control.is_sealed = false;
     access_control.bump = ctx.bumps.access_control;
@@ -92,6 +98,7 @@ pub fn handler(
     access_control.pending_pair_authority = None;
     access_control.pending_unseal_authority = None;
     access_control.pending_access_authority = None;
+    access_control.pending_nav_authority = None;
     access_control.sol_usdc_feed_id = [
         0xef, 0x0d, 0x8b, 0x6f, 0xda, 0x2c, 0xeb, 0xa4, 0x1d, 0xa1, 0x5d, 0x40, 0x95, 0xd1, 0xda,
         0x39, 0x2a, 0x0d, 0x2f, 0x8e, 0xd0, 0xc6, 0xc7, 0xbc, 0x0f, 0x4c, 0xfa, 0xc8, 0xc2, 0x80,

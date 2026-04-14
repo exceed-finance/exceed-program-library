@@ -34,6 +34,7 @@ pub mod liquid_staking {
         pair_authority: Pubkey,
         unseal_authority: Pubkey,
         access_authority: Pubkey,
+        nav_authority: Pubkey,
     ) -> Result<()> {
         instructions::create_access_control::handler(
             ctx,
@@ -43,6 +44,7 @@ pub mod liquid_staking {
             pair_authority,
             unseal_authority,
             access_authority,
+            nav_authority,
         )
     }
 
@@ -189,5 +191,21 @@ pub mod liquid_staking {
 
     pub fn migrate(ctx: Context<Migrate>) -> Result<()> {
         instructions::migrate::handler(ctx)
+    }
+
+    pub fn update_nav(ctx: Context<UpdateNav>, total_equity: u64) -> Result<()> {
+        instructions::update_nav::handler(ctx, total_equity)
+    }
+
+    pub fn vault_deposit(ctx: Context<VaultDeposit>, amount: u64) -> Result<()> {
+        instructions::vault_deposit::handler(ctx, amount)
+    }
+
+    pub fn update_pair_type(ctx: Context<UpdatePairType>, new_pair_type: u8) -> Result<()> {
+        instructions::update_pair_type::handler(ctx, new_pair_type)
+    }
+
+    pub fn force_withdrawal(ctx: Context<ForceWithdrawal>) -> Result<()> {
+        instructions::force_withdrawal::handler(ctx)
     }
 }

@@ -21,6 +21,7 @@ pub struct CreatePairParams {
     pub swap_fee_bps: u16,          // Fee for swap operations (basis points)
     pub withdraw_fee_bps: u16,      // Fee for withdrawal operations (basis points)
     pub minimum_deposit: u64,
+    pub pair_type: u8,  // 0 = Fixed, 1 = Variable
 }
 
 impl CreatePairParams {
@@ -183,6 +184,8 @@ pub fn handler(ctx: Context<CreatePair>, symbol: &str, params: &CreatePairParams
     // Validate params
     params.validate()?;
 
+    require!(params.pair_type <= 1, StakingError::InvalidPairType);
+
     // Initialize fee parameters
     require!(
         params.stake_fee_bps <= 2500,
@@ -220,6 +223,8 @@ pub fn handler(ctx: Context<CreatePair>, symbol: &str, params: &CreatePairParams
     pair.stake_fee_bps = params.stake_fee_bps;
     pair.swap_fee_bps = params.swap_fee_bps;
     pair.withdraw_fee_bps = params.withdraw_fee_bps;
+    pair.pair_type = params.pair_type;
+    pair.total_equity = 0;
 
     Ok(())
 }

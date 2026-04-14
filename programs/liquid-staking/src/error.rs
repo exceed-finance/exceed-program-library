@@ -179,4 +179,16 @@ pub enum StakingError {
 
     #[msg("Cannot receive more LSTs than input tokens")]
     InvalidMigrationOutput = 442,
+
+    #[msg("Invalid NAV authority")]
+    InvalidNavAuthority = 500,
+
+    #[msg("Pair is not variable NAV type")]
+    PairNotVariableNav = 501,
+
+    #[msg("NAV not yet submitted for this window period")]
+    NavNotSubmitted = 502,
+
+    #[msg("Invalid pair type")]
+    InvalidPairType = 503,
 }

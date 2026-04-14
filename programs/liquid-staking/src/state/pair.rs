@@ -33,12 +33,22 @@ pub struct Pair {
     pub stake_fee_bps: u16,
     pub swap_fee_bps: u16,
     pub withdraw_fee_bps: u16,
+
+    // Pair type: 0 = Fixed (compounding yield), 1 = Variable (admin-attested NAV)
+    pub pair_type: u8,
+    // For Variable pairs: total equity reported by nav_authority (used to compute exchange rate)
+    pub total_equity: u64,
 }
 
 pub const PRECISION: u128 = 1_000_000_000_000;
 
 impl Pair {
     pub fn calculate_exchange_rate(&mut self, current_timestamp: i64) -> Option<u64> {
+        // Variable pairs: return stored exchange rate directly (set by update_nav)
+        if self.pair_type == 1 {
+            return Some(self.last_yield_change_exchange_rate);
+        }
+
         if current_timestamp == self.last_yield_change_timestamp {
             return Some(self.last_yield_change_exchange_rate);
         }
@@ -318,6 +328,8 @@ mod tests {
             stake_fee_bps: 0,
             swap_fee_bps: 0,
             withdraw_fee_bps: 0,
+            pair_type: 0,
+            total_equity: 0,
         }
     }
 

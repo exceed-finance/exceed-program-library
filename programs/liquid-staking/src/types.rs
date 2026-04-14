@@ -8,6 +8,7 @@ pub enum AuthorityType {
     Pair,    // For creating pairs and updating yield
     Unseal,  // For unsealing program and managing guardians
     Access,
+    Nav,     // For submitting NAV updates to variable pairs
 }
 
 #[derive(AnchorSerialize, AnchorDeserialize, Clone, PartialEq)]

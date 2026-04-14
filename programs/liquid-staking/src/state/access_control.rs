@@ -16,6 +16,7 @@ pub struct AccessControl {
     pub pair_authority: Pubkey,
     pub unseal_authority: Pubkey,
     pub access_authority: Pubkey,
+    pub nav_authority: Pubkey,
 
     // Price Info
     pub sol_usdc_feed_id: [u8; 32],
@@ -31,6 +32,7 @@ pub struct AccessControl {
     pub pending_pair_authority: Option<Pubkey>,
     pub pending_unseal_authority: Option<Pubkey>,
     pub pending_access_authority: Option<Pubkey>,
+    pub pending_nav_authority: Option<Pubkey>,
 }
 
 impl AccessControl {
@@ -42,6 +44,7 @@ impl AccessControl {
             AuthorityType::Pair => self.pair_authority,
             AuthorityType::Unseal => self.unseal_authority,
             AuthorityType::Access => self.access_authority,
+            AuthorityType::Nav => self.nav_authority,
         }
     }
 
@@ -53,6 +56,7 @@ impl AccessControl {
             AuthorityType::Pair => self.pending_pair_authority,
             AuthorityType::Unseal => self.pending_unseal_authority,
             AuthorityType::Access => self.pending_access_authority,
+            AuthorityType::Nav => self.pending_nav_authority,
         }
     }
 
@@ -64,6 +68,7 @@ impl AccessControl {
             AuthorityType::Pair => self.pending_pair_authority = Some(new_authority),
             AuthorityType::Unseal => self.pending_unseal_authority = Some(new_authority),
             AuthorityType::Access => self.pending_access_authority = Some(new_authority),
+            AuthorityType::Nav => self.pending_nav_authority = Some(new_authority),
         }
     }
 
@@ -97,6 +102,10 @@ impl AccessControl {
                 self.access_authority = new_authority;
                 self.pending_access_authority = None;
             }
+            AuthorityType::Nav => {
+                self.nav_authority = new_authority;
+                self.pending_nav_authority = None;
+            }
         }
     }
 
@@ -108,6 +117,7 @@ impl AccessControl {
             AuthorityType::Pair => self.pending_pair_authority = None,
             AuthorityType::Unseal => self.pending_unseal_authority = None,
             AuthorityType::Access => self.pending_access_authority = None,
+            AuthorityType::Nav => self.pending_nav_authority = None,
         }
     }
 
