@@ -208,15 +208,7 @@ pub mod liquid_staking {
         instructions::update_nav::handler(ctx, total_equity)
     }
 
-    pub fn vault_deposit(ctx: Context<VaultDeposit>, amount: u64) -> Result<()> {
-        instructions::vault_deposit::handler(ctx, amount)
-    }
-
     pub fn update_pair_type(ctx: Context<UpdatePairType>, new_pair_type: u8) -> Result<()> {
         instructions::update_pair_type::handler(ctx, new_pair_type)
-    }
-
-    pub fn force_withdrawal(ctx: Context<ForceWithdrawal>) -> Result<()> {
-        instructions::force_withdrawal::handler(ctx)
     }
 }

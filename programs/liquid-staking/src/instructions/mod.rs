@@ -24,10 +24,8 @@ pub mod update_sol_usdc_feed;
 pub mod update_whitelist;
 pub mod update_nav;
 pub mod update_pair_type;
-pub mod vault_deposit;
 pub mod vault_withdraw;
 pub mod withdraw_fees;
-pub mod force_withdrawal;
 
 pub use accept_authority_transfer::*;
 pub use cancel_authority_transfer::*;
@@ -55,7 +53,5 @@ pub use update_sol_usdc_feed::*;
 pub use update_whitelist::*;
 pub use update_nav::*;
 pub use update_pair_type::*;
-pub use vault_deposit::*;
 pub use vault_withdraw::*;
 pub use withdraw_fees::*;
-pub use force_withdrawal::*;
