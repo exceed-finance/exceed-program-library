@@ -1,4 +1,5 @@
 use anchor_lang::prelude::*;
+use anchor_lang::system_program;
 
 use crate::{error::StakingError, state::AccessControl};
 
@@ -33,14 +34,18 @@ pub fn migrate_pair_handler(ctx: Context<MigratePairV2>) -> Result<()> {
     drop(data);
 
     // New Pair struct adds pair_type (u8) + total_equity (u64) = 9 bytes
-    // If account is already the new size, it's already migrated
     let new_size = current_len + 9;
 
-    // Check if already migrated by seeing if account has the extra bytes
-    // The 8-byte discriminator is at the start. Borsh serializes fields sequentially.
-    // We need to figure out the expected old vs new size.
-    // For safety, just reallocate and append defaults.
-    // If the realloc size equals current, skip.
+    // Transfer lamports from payer to account to cover additional rent
+    let rent = Rent::get()?;
+    let new_rent = rent.minimum_balance(new_size);
+    let current_lamports = pair_info.lamports();
+    if new_rent > current_lamports {
+        let diff = new_rent - current_lamports;
+        let payer = &ctx.accounts.pair_authority;
+        **payer.to_account_info().try_borrow_mut_lamports()? -= diff;
+        **pair_info.try_borrow_mut_lamports()? += diff;
+    }
 
     // Reallocate
     pair_info.realloc(new_size, false)?;
@@ -108,6 +113,17 @@ pub fn migrate_access_control_handler(
 
     // New fields: nav_authority (32) + pending_nav_authority (Option<Pubkey> = 1 + 32 = 33) = 65 bytes
     let new_size = current_len + 65;
+
+    // Transfer lamports from payer to account to cover additional rent
+    let rent = Rent::get()?;
+    let new_rent = rent.minimum_balance(new_size);
+    let current_lamports = ac_info.lamports();
+    if new_rent > current_lamports {
+        let diff = new_rent - current_lamports;
+        let payer = &ctx.accounts.authority;
+        **payer.to_account_info().try_borrow_mut_lamports()? -= diff;
+        **ac_info.try_borrow_mut_lamports()? += diff;
+    }
 
     ac_info.realloc(new_size, false)?;
 
