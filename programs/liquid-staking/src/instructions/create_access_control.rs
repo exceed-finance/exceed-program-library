@@ -2,7 +2,7 @@ use crate::{error::StakingError, state::AccessControl};
 use anchor_lang::prelude::*;
 use std::str::FromStr;
 
-const FIRST_ADMIN: &str = "CK5biDZPD3bMYBc4HLCci7QxP41KfB2Kn4qgCxJiiRVM";
+const FIRST_ADMIN: &str = "7knJWch5mrUB8g5NZSjYLsGVt5m8WReeQnyFQvqd75q5"; // DEVNET NEW TEST
 
 #[derive(Accounts)]
 pub struct CreateAccessControl<'info> {
