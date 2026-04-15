@@ -42,9 +42,16 @@ pub fn migrate_pair_handler(ctx: Context<MigratePairV2>) -> Result<()> {
     let current_lamports = pair_info.lamports();
     if new_rent > current_lamports {
         let diff = new_rent - current_lamports;
-        let payer = &ctx.accounts.pair_authority;
-        **payer.to_account_info().try_borrow_mut_lamports()? -= diff;
-        **pair_info.try_borrow_mut_lamports()? += diff;
+        system_program::transfer(
+            CpiContext::new(
+                ctx.accounts.system_program.to_account_info(),
+                system_program::Transfer {
+                    from: ctx.accounts.pair_authority.to_account_info(),
+                    to: pair_info.clone(),
+                },
+            ),
+            diff,
+        )?;
     }
 
     // Reallocate
@@ -120,9 +127,16 @@ pub fn migrate_access_control_handler(
     let current_lamports = ac_info.lamports();
     if new_rent > current_lamports {
         let diff = new_rent - current_lamports;
-        let payer = &ctx.accounts.authority;
-        **payer.to_account_info().try_borrow_mut_lamports()? -= diff;
-        **ac_info.try_borrow_mut_lamports()? += diff;
+        system_program::transfer(
+            CpiContext::new(
+                ctx.accounts.system_program.to_account_info(),
+                system_program::Transfer {
+                    from: ctx.accounts.authority.to_account_info(),
+                    to: ac_info.clone(),
+                },
+            ),
+            diff,
+        )?;
     }
 
     ac_info.realloc(new_size, false)?;
