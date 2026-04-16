@@ -49,23 +49,10 @@ jobs:
           path: target/deploy/liquid_staking.so
 
   anchor-tests:
+    needs: build
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-
-      - name: Install Rust
-        uses: dtolnay/rust-toolchain@master
-        with:
-          toolchain: ${{ env.RUST_VERSION }}
-
-      - name: Cache Cargo
-        uses: actions/cache@v4
-        with:
-          path: |
-            ~/.cargo/registry
-            ~/.cargo/git
-            target
-          key: ${{ runner.os }}-anchor-${{ env.RUST_VERSION }}-${{ hashFiles('**/Cargo.lock') }}
 
       - name: Install Solana CLI
         run: |
@@ -78,14 +65,19 @@ jobs:
           node-version: '20'
 
       - name: Install Anchor CLI
-        run: |
-          npm i -g @coral-xyz/anchor-cli@${{ env.ANCHOR_VERSION }}
+        run: npm i -g @coral-xyz/anchor-cli@${{ env.ANCHOR_VERSION }}
 
       - name: Install dependencies
         run: yarn install
 
+      - name: Download compiled program
+        uses: actions/download-artifact@v4
+        with:
+          name: liquid-staking-program
+          path: target/deploy/
+
       - name: Generate keypair
         run: solana-keygen new --no-bip39-passphrase --force
 
-      - name: Run Anchor Tests
-        run: anchor test
+      - name: Run Anchor Tests (skip build)
+        run: anchor test --skip-build
