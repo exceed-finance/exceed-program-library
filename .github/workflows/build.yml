@@ -36,17 +36,22 @@ jobs:
           sh -c "$(curl -sSfL https://release.anza.xyz/v${{ env.SOLANA_VERSION }}/install)"
           echo "$HOME/.local/share/solana/install/active_release/bin" >> $GITHUB_PATH
 
-      - name: Build SBF Program
+      - name: Build Liquid Staking Program
         run: cargo-build-sbf --manifest-path programs/liquid-staking/Cargo.toml
+
+      - name: Build Early Purchase Program
+        run: cargo-build-sbf --manifest-path programs/early-purchase/Cargo.toml
 
       - name: Run Rust Unit Tests
         run: cargo test --manifest-path programs/liquid-staking/Cargo.toml
 
-      - name: Upload Program Artifact
+      - name: Upload Program Artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: liquid-staking-program
-          path: target/deploy/liquid_staking.so
+          name: program-binaries
+          path: |
+            target/deploy/liquid_staking.so
+            target/deploy/early_purchase.so
 
   anchor-tests:
     needs: build
@@ -70,10 +75,10 @@ jobs:
       - name: Install dependencies
         run: yarn install
 
-      - name: Download compiled program
+      - name: Download compiled programs
         uses: actions/download-artifact@v4
         with:
-          name: liquid-staking-program
+          name: program-binaries
           path: target/deploy/
 
       - name: Generate keypair
