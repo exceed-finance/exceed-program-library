@@ -30,6 +30,7 @@ async function main() {
     const pairAuthorityPath = "REPLACE_ME"; // Replace with actual path
     const unsealAuthorityPath = "REPLACE_ME"; // Replace with actual path
     const accessAuthorityPath = "REPLACE_ME"; // Replace with actual path
+    const navAuthorityPath = "REPLACE_ME"; // Replace with actual path
 
     // Load keypairs and convert to UMI keypairs
     const vaultAuthorityKeypair = umi.eddsa.createKeypairFromSecretKey(Uint8Array.from(JSON.parse(fs.readFileSync(vaultAuthorityPath, "utf-8"))));
@@ -38,6 +39,7 @@ async function main() {
     const pairAuthorityKeypair = umi.eddsa.createKeypairFromSecretKey(Uint8Array.from(JSON.parse(fs.readFileSync(pairAuthorityPath, "utf-8"))));
     const unsealAuthorityKeypair = umi.eddsa.createKeypairFromSecretKey(Uint8Array.from(JSON.parse(fs.readFileSync(unsealAuthorityPath, "utf-8"))));
     const accessAuthorityKeypair = umi.eddsa.createKeypairFromSecretKey(Uint8Array.from(JSON.parse(fs.readFileSync(accessAuthorityPath, "utf-8"))));
+    const navAuthorityKeypair = umi.eddsa.createKeypairFromSecretKey(Uint8Array.from(JSON.parse(fs.readFileSync(navAuthorityPath, "utf-8"))));
 
     // Create UMI signers
     const vaultAuthority = createSignerFromKeypair(umi, vaultAuthorityKeypair);
@@ -46,6 +48,7 @@ async function main() {
     const pairAuthority = createSignerFromKeypair(umi, pairAuthorityKeypair);
     const unsealAuthority = createSignerFromKeypair(umi, unsealAuthorityKeypair);
     const accessAuthority = createSignerFromKeypair(umi, accessAuthorityKeypair);
+    const navAuthority = createSignerFromKeypair(umi, navAuthorityKeypair);
 
     // 5. Find the access control PDA
     const [accessControlAddress] = findAccessControlPda(umi);
@@ -62,7 +65,8 @@ async function main() {
         depositAuthority: depositAuthority.publicKey,
         pairAuthority: pairAuthority.publicKey,
         unsealAuthority: unsealAuthority.publicKey,
-        accessAuthority: accessAuthority.publicKey
+        accessAuthority: accessAuthority.publicKey,
+        navAuthority: navAuthority.publicKey
     }).sendAndConfirm(umi);
 
     // 7. Send the transaction

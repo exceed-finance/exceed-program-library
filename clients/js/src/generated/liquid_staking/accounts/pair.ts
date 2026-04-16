@@ -54,6 +54,8 @@ export type PairAccountData = {
   stakeFeeBps: number;
   swapFeeBps: number;
   withdrawFeeBps: number;
+  pairType: number;
+  totalEquity: bigint;
 };
 
 export type PairAccountDataArgs = {
@@ -74,6 +76,8 @@ export type PairAccountDataArgs = {
   stakeFeeBps: number;
   swapFeeBps: number;
   withdrawFeeBps: number;
+  pairType: number;
+  totalEquity: number | bigint;
 };
 
 export function getPairAccountDataSerializer(): Serializer<
@@ -101,6 +105,8 @@ export function getPairAccountDataSerializer(): Serializer<
         ['stakeFeeBps', u16()],
         ['swapFeeBps', u16()],
         ['withdrawFeeBps', u16()],
+        ['pairType', u8()],
+        ['totalEquity', u64()],
       ],
       { description: 'PairAccountData' }
     ),
@@ -194,6 +200,8 @@ export function getPairGpaBuilder(context: Pick<Context, 'rpc' | 'programs'>) {
       stakeFeeBps: number;
       swapFeeBps: number;
       withdrawFeeBps: number;
+      pairType: number;
+      totalEquity: number | bigint;
     }>({
       discriminator: [0, bytes({ size: 8 })],
       pairBump: [8, u8()],
@@ -213,6 +221,8 @@ export function getPairGpaBuilder(context: Pick<Context, 'rpc' | 'programs'>) {
       stakeFeeBps: [null, u16()],
       swapFeeBps: [null, u16()],
       withdrawFeeBps: [null, u16()],
+      pairType: [null, u8()],
+      totalEquity: [null, u64()],
     })
     .deserializeUsing<Pair>((account) => deserializePair(account))
     .whereField(

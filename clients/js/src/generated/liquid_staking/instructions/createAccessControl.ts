@@ -45,6 +45,7 @@ export type CreateAccessControlInstructionData = {
   pairAuthority: PublicKey;
   unsealAuthority: PublicKey;
   accessAuthority: PublicKey;
+  navAuthority: PublicKey;
 };
 
 export type CreateAccessControlInstructionDataArgs = {
@@ -54,6 +55,7 @@ export type CreateAccessControlInstructionDataArgs = {
   pairAuthority: PublicKey;
   unsealAuthority: PublicKey;
   accessAuthority: PublicKey;
+  navAuthority: PublicKey;
 };
 
 export function getCreateAccessControlInstructionDataSerializer(): Serializer<
@@ -74,6 +76,7 @@ export function getCreateAccessControlInstructionDataSerializer(): Serializer<
         ['pairAuthority', publicKeySerializer()],
         ['unsealAuthority', publicKeySerializer()],
         ['accessAuthority', publicKeySerializer()],
+        ['navAuthority', publicKeySerializer()],
       ],
       { description: 'CreateAccessControlInstructionData' }
     ),

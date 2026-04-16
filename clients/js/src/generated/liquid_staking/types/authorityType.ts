@@ -15,6 +15,7 @@ export enum AuthorityType {
   Pair,
   Unseal,
   Access,
+  Nav,
 }
 
 export type AuthorityTypeArgs = AuthorityType;

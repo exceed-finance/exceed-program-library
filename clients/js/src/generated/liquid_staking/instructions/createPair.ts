@@ -24,6 +24,7 @@ import {
   struct,
   u16,
   u64,
+  u8,
 } from '@metaplex-foundation/umi/serializers';
 import {
   ResolvedAccount,
@@ -61,6 +62,7 @@ export type CreatePairInstructionData = {
   swapFeeBps: number;
   withdrawFeeBps: number;
   minimumDeposit: bigint;
+  pairType: number;
 };
 
 export type CreatePairInstructionDataArgs = {
@@ -73,6 +75,7 @@ export type CreatePairInstructionDataArgs = {
   swapFeeBps: number;
   withdrawFeeBps: number;
   minimumDeposit: number | bigint;
+  pairType: number;
 };
 
 export function getCreatePairInstructionDataSerializer(): Serializer<
@@ -96,6 +99,7 @@ export function getCreatePairInstructionDataSerializer(): Serializer<
         ['swapFeeBps', u16()],
         ['withdrawFeeBps', u16()],
         ['minimumDeposit', u64()],
+        ['pairType', u8()],
       ],
       { description: 'CreatePairInstructionData' }
     ),

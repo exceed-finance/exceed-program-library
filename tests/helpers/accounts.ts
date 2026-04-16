@@ -30,6 +30,7 @@ export async function createAccessControlAccounts(svm: LiteSVM, umi: any) {
     const pairAuthority = createUser(svm, umi);
     const unsealAuthority = createUser(svm, umi);
     const accessAuthority = createUser(svm, umi)
+    const navAuthority = createUser(svm, umi)
 
     const [accessControlAddress] = findAccessControlPda(umi);
 
@@ -42,7 +43,8 @@ export async function createAccessControlAccounts(svm: LiteSVM, umi: any) {
         depositAuthority: depositAuthority.publicKey,
         pairAuthority: pairAuthority.publicKey,
         unsealAuthority: unsealAuthority.publicKey,
-        accessAuthority: accessAuthority.publicKey
+        accessAuthority: accessAuthority.publicKey,
+        navAuthority: navAuthority.publicKey
     }).setBlockhash(svm.latestBlockhash()).buildAndSign(umi);
 
     const result = svm.sendTransaction(toWeb3JsTransaction(createAccessControlTx));
@@ -62,6 +64,7 @@ export async function createAccessControlAccounts(svm: LiteSVM, umi: any) {
             pairAuthority,
             unsealAuthority,
             accessAuthority,
+            navAuthority,
             accessControlCreator: accessControlCreatorSigner
         }
     };

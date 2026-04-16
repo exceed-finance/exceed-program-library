@@ -51,7 +51,8 @@ const createPairs = async () => {
         stakeFeeBps: 0,
         swapFeeBps: 0,
         withdrawFeeBps: 50,
-        minimumDeposit: 3000000 // 10 of sol at $140
+        minimumDeposit: 3000000, // 10 of sol at $140
+        pairType: 0
     }).buildWithLatestBlockhash(umi);
 
     // console.log(bs58.encode(createPikSolSig));

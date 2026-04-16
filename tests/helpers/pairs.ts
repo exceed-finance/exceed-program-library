@@ -74,6 +74,7 @@ export async function createPairAccounts(svm: LiteSVM, umi: any, params: {
         stakeFeeBps,
         swapFeeBps,
         withdrawFeeBps,
+        pairType: 0,
         tokenProgram: tokenProgramId,
         pairBaseTokenAccount: baseTokenAddress,
         lstFeeAccount: lstTokenAddress
