@@ -79,5 +79,5 @@ jobs:
       - name: Generate keypair
         run: solana-keygen new --no-bip39-passphrase --force
 
-      - name: Run Anchor Tests (skip build)
-        run: anchor test --skip-build
+      - name: Run LiteSVM Tests
+        run: yarn run ts-mocha -p ./tsconfig.json -t 1000000 tests/**/*.ts
