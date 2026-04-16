@@ -10,7 +10,7 @@ pub mod state;
 pub mod types;
 pub mod u64x64_math;
 
-declare_id!("EZJ3xHFhtUqv2etLvHyRKUMKNNrdN1GQ8ACfT6vji95w"); // DEVNET OLD TEST
+declare_id!("GTmavJc15q4TowiFmdzFU7VFsfkfahxiMXT9xfS9eeCo"); // DEVNET OLD TEST
 
 security_txt! {
     name: "liquid_staking",
