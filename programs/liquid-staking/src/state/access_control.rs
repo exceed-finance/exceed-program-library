@@ -9,14 +9,13 @@ pub struct AccessControl {
     pub merkle_root: [u8; 32],
     pub is_whitelist_enabled: bool,
 
-    // Core authorities
+    // Core authorities (original 6 — DO NOT reorder, Borsh layout must match on-chain data)
     pub vault_authority: Pubkey,
     pub window_authority: Pubkey,
     pub deposit_authority: Pubkey,
     pub pair_authority: Pubkey,
     pub unseal_authority: Pubkey,
     pub access_authority: Pubkey,
-    pub nav_authority: Pubkey,
 
     // Price Info
     pub sol_usdc_feed_id: [u8; 32],
@@ -25,13 +24,16 @@ pub struct AccessControl {
     pub guardians: [Option<Pubkey>; 5],
     pub is_sealed: bool,
 
-    // Authority transfer system
+    // Authority transfer system (original 6 — DO NOT reorder)
     pub pending_vault_authority: Option<Pubkey>,
     pub pending_window_authority: Option<Pubkey>,
     pub pending_deposit_authority: Option<Pubkey>,
     pub pending_pair_authority: Option<Pubkey>,
     pub pending_unseal_authority: Option<Pubkey>,
     pub pending_access_authority: Option<Pubkey>,
+
+    // === NEW FIELDS — APPENDED AT END for Borsh compatibility ===
+    pub nav_authority: Pubkey,
     pub pending_nav_authority: Option<Pubkey>,
 }
 
