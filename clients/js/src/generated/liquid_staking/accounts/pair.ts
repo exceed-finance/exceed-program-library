@@ -178,7 +178,7 @@ export async function safeFetchAllPair(
 export function getPairGpaBuilder(context: Pick<Context, 'rpc' | 'programs'>) {
   const programId = context.programs.getPublicKey(
     'liquidStaking',
-    'par1tyqusak2f2DXg9RHv78SVHNWXkJLSbtJZQSuWjV'
+    'GTmavJc15q4TowiFmdzFU7VFsfkfahxiMXT9xfS9eeCo'
   );
   return gpaBuilder(context, programId)
     .registerFields<{

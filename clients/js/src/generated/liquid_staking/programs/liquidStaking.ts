@@ -18,7 +18,7 @@ import {
 } from '../errors';
 
 export const LIQUID_STAKING_PROGRAM_ID =
-  'par1tyqusak2f2DXg9RHv78SVHNWXkJLSbtJZQSuWjV' as PublicKey<'par1tyqusak2f2DXg9RHv78SVHNWXkJLSbtJZQSuWjV'>;
+  'GTmavJc15q4TowiFmdzFU7VFsfkfahxiMXT9xfS9eeCo' as PublicKey<'GTmavJc15q4TowiFmdzFU7VFsfkfahxiMXT9xfS9eeCo'>;
 
 export function createLiquidStakingProgram(): Program {
   return {

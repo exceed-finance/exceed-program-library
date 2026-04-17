@@ -86,7 +86,7 @@ export function updateWhitelist(
   // Program ID.
   const programId = context.programs.getPublicKey(
     'liquidStaking',
-    'par1tyqusak2f2DXg9RHv78SVHNWXkJLSbtJZQSuWjV'
+    'GTmavJc15q4TowiFmdzFU7VFsfkfahxiMXT9xfS9eeCo'
   );
 
   // Accounts.
