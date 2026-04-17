@@ -46,7 +46,6 @@ export type AccessControlAccountData = {
   pairAuthority: PublicKey;
   unsealAuthority: PublicKey;
   accessAuthority: PublicKey;
-  navAuthority: PublicKey;
   solUsdcFeedId: Uint8Array;
   guardians: Array<Option<PublicKey>>;
   isSealed: boolean;
@@ -56,6 +55,7 @@ export type AccessControlAccountData = {
   pendingPairAuthority: Option<PublicKey>;
   pendingUnsealAuthority: Option<PublicKey>;
   pendingAccessAuthority: Option<PublicKey>;
+  navAuthority: PublicKey;
   pendingNavAuthority: Option<PublicKey>;
 };
 
@@ -69,7 +69,6 @@ export type AccessControlAccountDataArgs = {
   pairAuthority: PublicKey;
   unsealAuthority: PublicKey;
   accessAuthority: PublicKey;
-  navAuthority: PublicKey;
   solUsdcFeedId: Uint8Array;
   guardians: Array<OptionOrNullable<PublicKey>>;
   isSealed: boolean;
@@ -79,6 +78,7 @@ export type AccessControlAccountDataArgs = {
   pendingPairAuthority: OptionOrNullable<PublicKey>;
   pendingUnsealAuthority: OptionOrNullable<PublicKey>;
   pendingAccessAuthority: OptionOrNullable<PublicKey>;
+  navAuthority: PublicKey;
   pendingNavAuthority: OptionOrNullable<PublicKey>;
 };
 
@@ -103,7 +103,6 @@ export function getAccessControlAccountDataSerializer(): Serializer<
         ['pairAuthority', publicKeySerializer()],
         ['unsealAuthority', publicKeySerializer()],
         ['accessAuthority', publicKeySerializer()],
-        ['navAuthority', publicKeySerializer()],
         ['solUsdcFeedId', bytes({ size: 32 })],
         ['guardians', array(option(publicKeySerializer()), { size: 5 })],
         ['isSealed', bool()],
@@ -113,6 +112,7 @@ export function getAccessControlAccountDataSerializer(): Serializer<
         ['pendingPairAuthority', option(publicKeySerializer())],
         ['pendingUnsealAuthority', option(publicKeySerializer())],
         ['pendingAccessAuthority', option(publicKeySerializer())],
+        ['navAuthority', publicKeySerializer()],
         ['pendingNavAuthority', option(publicKeySerializer())],
       ],
       { description: 'AccessControlAccountData' }
@@ -208,7 +208,6 @@ export function getAccessControlGpaBuilder(
       pairAuthority: PublicKey;
       unsealAuthority: PublicKey;
       accessAuthority: PublicKey;
-      navAuthority: PublicKey;
       solUsdcFeedId: Uint8Array;
       guardians: Array<OptionOrNullable<PublicKey>>;
       isSealed: boolean;
@@ -218,6 +217,7 @@ export function getAccessControlGpaBuilder(
       pendingPairAuthority: OptionOrNullable<PublicKey>;
       pendingUnsealAuthority: OptionOrNullable<PublicKey>;
       pendingAccessAuthority: OptionOrNullable<PublicKey>;
+      navAuthority: PublicKey;
       pendingNavAuthority: OptionOrNullable<PublicKey>;
     }>({
       discriminator: [0, bytes({ size: 8 })],
@@ -230,9 +230,8 @@ export function getAccessControlGpaBuilder(
       pairAuthority: [138, publicKeySerializer()],
       unsealAuthority: [170, publicKeySerializer()],
       accessAuthority: [202, publicKeySerializer()],
-      navAuthority: [234, publicKeySerializer()],
-      solUsdcFeedId: [266, bytes({ size: 32 })],
-      guardians: [298, array(option(publicKeySerializer()), { size: 5 })],
+      solUsdcFeedId: [234, bytes({ size: 32 })],
+      guardians: [266, array(option(publicKeySerializer()), { size: 5 })],
       isSealed: [null, bool()],
       pendingVaultAuthority: [null, option(publicKeySerializer())],
       pendingWindowAuthority: [null, option(publicKeySerializer())],
@@ -240,6 +239,7 @@ export function getAccessControlGpaBuilder(
       pendingPairAuthority: [null, option(publicKeySerializer())],
       pendingUnsealAuthority: [null, option(publicKeySerializer())],
       pendingAccessAuthority: [null, option(publicKeySerializer())],
+      navAuthority: [null, publicKeySerializer()],
       pendingNavAuthority: [null, option(publicKeySerializer())],
     })
     .deserializeUsing<AccessControl>((account) =>
