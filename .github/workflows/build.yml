@@ -85,4 +85,29 @@ jobs:
         run: solana-keygen new --no-bip39-passphrase --force
 
       - name: Run LiteSVM Tests
-        run: yarn run ts-mocha -p ./tsconfig.json -t 1000000 'tests/unit-tests/!(migrate)*.test.ts'
+        run: |
+          FAILED=0
+          for f in tests/unit-tests/authority-transfer.test.ts \
+                   tests/unit-tests/guardian-management.test.ts \
+                   tests/unit-tests/pair-configuration.test.ts \
+                   tests/unit-tests/pair-validation.test.ts \
+                   tests/unit-tests/program-sealing.test.ts \
+                   tests/unit-tests/rate-calculations.test.ts \
+                   tests/unit-tests/rates.test.ts \
+                   tests/unit-tests/staking.test.ts \
+                   tests/unit-tests/token-metadata.test.ts \
+                   tests/unit-tests/vault-management.test.ts \
+                   tests/unit-tests/whitelist.test.ts \
+                   tests/unit-tests/swap-lst.test.ts \
+                   tests/unit-tests/withdrawal.test.ts \
+                   tests/unit-tests/close-withdrawal-window.test.ts; do
+            echo "======= Running $f ======="
+            if yarn run ts-mocha -p ./tsconfig.json -t 1000000 "$f" 2>&1; then
+              echo "======= PASSED: $f ======="
+            else
+              echo "======= FAILED: $f ======="
+              FAILED=$((FAILED+1))
+            fi
+          done
+          echo "======= TOTAL FAILURES: $FAILED ======="
+          if [ $FAILED -gt 0 ]; then exit 1; fi
