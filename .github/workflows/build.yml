@@ -85,6 +85,8 @@ jobs:
         run: solana-keygen new --no-bip39-passphrase --force
 
       - name: Run LiteSVM Tests
+        env:
+          NODE_OPTIONS: "--max-old-space-size=6144 --expose-gc"
         run: |
           FAILED=0
           for f in tests/unit-tests/authority-transfer.test.ts \
