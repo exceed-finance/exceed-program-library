@@ -18,7 +18,7 @@ export const SOL_USD_FEED_ADDRESS = publicKey('7UVimffxr9ow1uXYxsr4LHAcV58mLzhmw
  * Creates a basic test environment with SVM and UMI
  */
 export function createTestEnvironment() {
-    const svm = new LiteSVM().withSplPrograms();
+    const svm = new LiteSVM().withDefaultPrograms();
     svm.addProgramFromFile(toWeb3JsPublicKey(LIQUID_STAKING_PROGRAM_ID), 'target/deploy/liquid_staking.so');
     svm.addProgramFromFile(toWeb3JsPublicKey(EARLY_PURCHASE_PROGRAM_ID), 'target/deploy/early_purchase.so');
     svm.addProgramFromFile(toWeb3JsPublicKey(MPL_SYSTEM_EXTRAS_PROGRAM_ID), 'program-bytes/mpl-system-extras.so');
